@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cp -r ./Config ./zfp/Config
+cp -r ./src/Makefile ./zfp/src/Makefile
+cp -r ./src/zfp_wasm.c ./zfp/src/zfp_wasm.c
+
+pushd ./zfp
+make clean
+emmake make
+emcc -s EXPORTED_FUNCTIONS=_malloc -s EXPORTED_RUNTIME_METHODS='["ccall"]' lib/libzfp.so -o zfp.js
+mv ./zfp.{js,wasm} ..
+popd
