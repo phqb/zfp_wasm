@@ -7,6 +7,12 @@ cp -r ./src/zfp_wasm.c ./zfp/src/zfp_wasm.c
 pushd ./zfp
 make clean
 emmake make
-emcc -s EXPORTED_FUNCTIONS=_malloc -s EXPORTED_RUNTIME_METHODS='["ccall"]' lib/libzfp.so -o zfp.js
-mv ./zfp.{js,wasm} ..
+emcc \
+    -O3 \
+    -s MODULARIZE='1' \
+    -s EXPORT_NAME='"ZfpModule"' \
+    -s EXPORTED_FUNCTIONS=_malloc,_free \
+    -s EXPORTED_RUNTIME_METHODS='["ccall"]' \
+    lib/libzfp.so -o zfp_wasm.js
+mv ./zfp_wasm.{js,wasm} ..
 popd

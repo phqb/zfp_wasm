@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="zfp_wasm.js"></script>
+  <script src="zfp.js"></script>
+  <script src="testData.js"></script>
+</head>
+<body>
+  <script>
+    (async () => {
+      const zfp = await ZfpModule();
+
+      const len = Math.min(testData.pos.length, 500);
+      const [nx, ny] = [len * 2 + 1, 2];
+      const tolerance = 1e-3;
+
+      const data = new Float32Array(nx * ny);
+      let i = 0;
+      for (let k = 0; k < 2; k += 1) {
+        for (let j = len - 1; j >= 0; j -= 1) data[i++] = testData.neg[j][k];
+        data[i++] = testData.zero[k];
+        for (let j = 0; j < len; j += 1) data[i++] = testData.pos[j][k];
+      }
+
+      console.log(data);
+
+      const compressed = compress2d(zfp, data, nx, ny, tolerance);
+      console.log(compressed);
+
+      const decompressed = decompress2d(zfp, compressed, nx, ny, tolerance);
+      console.log(decompressed);
+    })()
+  </script> 
+</body>
+</html>
